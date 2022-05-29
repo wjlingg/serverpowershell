@@ -27,3 +27,16 @@ foreach ($server in $serverlist) # create dummy data for each of the server host
 
 # ConvertTo-Json $allServer | out-file -FilePath "$env:HOMEDRIVE$env:HOMEPATH\ServerObjectList.json" # convert object to json file
 $allServer | Export-Csv -Path "$env:HOMEDRIVE$env:HOMEPATH\ServerObjectList.csv" # export object to csv file
+
+$serverobject = Import-Csv -Path "$env:HOMEDRIVE$env:HOMEPATH\ServerObjectList.csv" # import items in CSV to objects
+$serverobject | Format-Table # format the output as table
+
+foreach ($server in $serverlist) # for each server in serverlist retrieve the corresponding information from csv
+{ 
+    if ($serverobject.ComputerName -contains $server) # if server is present in csv, retrieve server information
+    {
+        $serverObject | Where-Object -Property ComputerName -eq $server # Display required server information
+    } else { # if server is not present in csv, display error message
+        Write-host "Error: No such server host found in csv for $server."
+    }
+}
